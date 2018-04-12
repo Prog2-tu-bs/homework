@@ -1,6 +1,7 @@
 /**
  * Diese Klasse dient als Sammlung fuer die Waende. hier wird ihr derzeitiger Status festgehalten
- * 
+ * Nun auch mit GIT
+ *
  * @author Nathalie Peine 4902166 Gruppe 6b
  * @author Marcel Fricke 4879684 Gruppe 6b 
  */
