@@ -48,13 +48,13 @@ public class Map {
         }
         
         //Fuellen der Karte
-        this.fillMap(this.width - 1, this.height - 1);
+        //this.fillMap(this.width - 1, this.height - 1);
         
 
     	int positionX = Map.randomNumber(this.height);
     	int positionY = Map.randomNumber(this.width);
     	
-    	this.generateMatchfield(positionX, positionY);
+    	//this.generateMatchfield(positionX, positionY);
 	
         
         //Erstellen des Spieler
@@ -69,7 +69,19 @@ public class Map {
         
        
     } //end Constructor
-    
+
+
+	/**
+	 * Hier wird eine Zufallszahl erzeugt.
+	 *
+	 * @param max ein Maximalwert
+	 * @return randomNumber eine Zufallszahl zwischen 0 und max
+	 */
+	public static int randomNumber(int max) {
+		double rn = Math.round(Math.random() * (max - 1));
+		int randomNumber = (int) rn;
+		return randomNumber;
+	}
     
     
     /**
@@ -105,19 +117,8 @@ public class Map {
         	
         } //end while
     	
-    }
-    
-    
-    /**
-     * Hier wird eine Zufallszahl erzeugt.
-     * 
-     * @param max ein Maximalwert
-     * @return randomNumber eine Zufallszahl zwischen 0 und max
-     */
-    public static int randomNumber(int max) {
-    	int randomNumber = (int) (Math.round((Math.random() * (max - 1))));
-    	return randomNumber;
-    }
+    } //end createAliens()
+
 
     /**
      * In dieser Klasse wird das Objekt Spieler erstellt. Welcher Spielertyp ausgewaehlt wird, wird durch Zufall bestimmt.
@@ -148,96 +149,74 @@ public class Map {
     	
     	//Spieler in die Karte eintragen
         this.map[xplayer][yplayer] = 'P';  
-    } //end choosePlayer()
+    } //end createPlayer()
 
 
-    /**
-	 * In dieser Methode findet die Runde statt. Es werden die Lebenspunkte des Spielers ausgelesen, der Angriff 
-	 * des Spielers durchgefuehrt und die Angriffe der Aliens. Hierbei werden bei erfolgreichem Angriff entweder 
-	 * die Aliens als tod bezeichnet oder dem Spieler Leben abgezogen. Alles was in der Runde passiert ist wird 
-	 * in Kommentaren verfasst als String zurueckgegeben.
-	 *
-	 * @param xattack x-Koordinate des anzugreifenden Aliens
-	 * @param yattack y-Koordinate des anzugreifenden Aliens
-	 * @return round Die durch Kommentare in einem String zusammengefaten Ereignisse der Runde
-	 */
-    public String round(int xattack, int yattack) {
-    	String round;
-    	int xalienAttacked;
-    	int yalienAttacked;
-    	
-    	//Abfrage der Lebenspunkte
-    	round = "Der Spieler hat noch " + player.getHitpoints() + " Lebenspunkte.";
-    	
-    	//Bewegungsfolge
-		
-		System.out.println("wohin soll der Spieler sich bewegen? (1 - 3 Felder)");
-		String direction = scan1.next();
-    	if (player.checkPath(direction)) {
-    		player.move(direction, map, 'P', this.getPlayer(), this.getAliens());
-    	} else {
-    		return "Falsche Eingabe beim Weg!";
-    		
-    	}
-    	
-    	//Angabe der Koordinaten des angegriffenen Aliens
-    	round = round + "\nDer Spieler greift das Alien bei (" + xattack + "," + yattack + ") an.";
-    	
-    	//Angriffsversuch des Spielers
-    	boolean successPlayer = player.attack(xattack, yattack);
-    	
-    	if (successPlayer) {
-    		//Wenn der Angriff erfolgreich war
-    		round = round + "\nDer Spieler hat das Alien getroffen!";
-    		
-    		//Suchen nach dem bekaempften Alien
-    		for (int i = 0; i < aliens.length; i++) {
-    			
-    			xalienAttacked = aliens[i].getX();
-    			yalienAttacked = aliens[i].getY();
-    			
-				//Wenn Alien gefunden wurde
-    			if (xattack == xalienAttacked && yattack == yalienAttacked) {
-    				//Leben des Aliens auf tod (false) setzen + Makierung auf der Karte
-    				aliens[i].setAlife(false);
-    				map[xattack][yattack] = 'X';
-    			} //end if
-    			
-    		} //end for
-    	} else {
-    		//Wenn der Angriff nicht erfolgreich war
-    		round = round + "\nDer Spieler hat das Alien verfehlt!";
-    	} //end if-else
-    	
-    	//Angriffsversuch von jedem lebenden Alien
-    	for (int i = 0; i < aliens.length; i++) {
-    		
-    		//Pruefen ob Alien noch lebt
-    		if (aliens[i].getAlife()) {
-    			//Bewegung des Aliens
-    			
-    			map = aliens[i].move(Alien.path(1), map, 'A', this.getPlayer(), this.getAliens());
-    			
-    			
-    			//System.out.println(this.toString());
-    			//Angriffsversuch des Aliens
-    			round = round + "\nDas Alien bei (" + aliens[i].getX() + "," + aliens[i].getY() + ") greift den Spieler an";
-    			boolean succsessAlien = aliens[i].attack(player.getX(), player.getY());
-    			
-    			if (succsessAlien) {
-    				//Wenn der Angriff erfolgreich war: ein Leben des Spielers abziehen
-    				player.removeHitpoint();
-    				round = round + "\nDas Alien hat den Spieler getroffen!";
-    			} else {
-    				//Wenn nicht er nicht erfolgreich war
-    				round = round + "\nDas Alien hat den Spieler verfehlt!";
-    			} // end if-else
-    		} //end if    		
-    	} //end for
-    	
-    	return round;
-    } //end round()
-    
+
+
+	public boolean checkDirection(String direction) {
+    	return player.checkPath(direction);
+	} //end checkDirection()
+
+
+    public void movePlayer(String direction) {
+        player.move(direction, map, 'P', this.getPlayer(), this.getAliens());
+    } //end movePlayer()
+
+
+    public boolean attacking(int xattack, int yattack) {
+        return  player.attack(xattack, yattack);
+    } //end attacking()
+
+    public void fightedAlien(int xattack, int yattack) {
+        //Suchen nach dem bekaempften Alien
+        int xalienAttacked, yalienAttacked;
+
+        for (int i = 0; i < aliens.length; i++) {
+
+            xalienAttacked = aliens[i].getX();
+            yalienAttacked = aliens[i].getY();
+
+            //Wenn Alien gefunden wurde
+            if (xattack == xalienAttacked && yattack == yalienAttacked) {
+                //Leben des Aliens auf tod (false) setzen + Makierung auf der Karte
+                aliens[i].setAlife(false);
+                map[xattack][yattack] = 'X';
+            } //end if
+
+        } //end for
+    } //end fightedAlien()
+
+    public String alienTurn() {
+        String alienAttacks = "";
+
+        //Angriffsversuch von jedem lebenden Alien
+        for (int i = 0; i < aliens.length; i++) {
+
+            //Pruefen ob Alien noch lebt
+            if (aliens[i].getAlife()) {
+                //Bewegung des Aliens
+                map = aliens[i].move(Alien.path(1), map, 'A', this.getPlayer(), this.getAliens());
+
+                //System.out.println(this.toString());
+                //Angriffsversuch des Aliens
+                alienAttacks = alienAttacks + "\nDas Alien bei (" + aliens[i].getX() + "," + aliens[i].getY() + ") greift den Spieler an";
+                boolean succsessAlien = aliens[i].attack(player.getX(), player.getY());
+
+                if (succsessAlien) {
+                    //Wenn der Angriff erfolgreich war: ein Leben des Spielers abziehen
+                    player.removeHitpoint();
+                    alienAttacks = alienAttacks + "\nDas Alien hat den Spieler getroffen!";
+                } else {
+                    //Wenn nicht er nicht erfolgreich war
+                    alienAttacks = alienAttacks + "\nDas Alien hat den Spieler verfehlt!";
+                } // end if-else
+            } //end if
+        } //end for
+
+        return alienAttacks;
+    } //end alienTurn()
+
 
     /**
 	 * In dieser Methode wird geprueft, ob alle Aliens tod sind oder der Spieler maximal 0 Leben verbleibend hat,
@@ -385,7 +364,7 @@ public class Map {
 
     
     
-    
+
     /**
      * Generiert in dem mit Waenden gefuellten Spielfeld die Wege.
      * Es wird darauf geachtet, im Feld zu bleiben und keine Position doppelt zu
@@ -395,71 +374,16 @@ public class Map {
      * @param positionY Y-Startposition, wo die Generierung anfaengt
      */
     public void  generateMatchfield(int positionX, int positionY) {
-    	    	
-    	wall[positionX][positionY].setVisited(true);
-    	wall[positionX][positionY].setExist(false);
-    	map[positionX][positionY] = ' ';    	
-    	
-    	if (this.checkNeighbour(positionX - 2, positionY)) {
-    		neighbour[0] = new Neighbour(positionX - 2, positionY, true);
-    		neighbour[0].setBetweenX(positionX - 1);
-    		neighbour[0].setBetweenY(positionY);
-    	} else {
-    		neighbour[0] = new Neighbour(positionX - 2, positionY, false);
-    	}
-    	
-    	
-    	if (this.checkNeighbour(positionX + 2, positionY)) {
-    		neighbour[1] = new Neighbour(positionX + 2, positionY, true);
-    		neighbour[1].setBetweenX(positionX + 1);
-    		neighbour[1].setBetweenY(positionY);
-    	} else {
-    		neighbour[1] = new Neighbour(positionX - 2, positionY, false);
-    	}
-    	
-    	
-    	if (this.checkNeighbour(positionX, positionY - 2)) {
-    		neighbour[2] = new Neighbour(positionX, positionY - 2, true);
-    		neighbour[2].setBetweenX(positionX);
-    		neighbour[2].setBetweenY(positionY - 1);
-    	} else {
-    		neighbour[2] = new Neighbour(positionX - 2, positionY, false);
-    	}
-    	
-    	
-    	if (this.checkNeighbour(positionX, positionY + 2)) {
-    		neighbour[3] = new Neighbour(positionX, positionY + 2, true);
-    		neighbour[3].setBetweenX(positionX);
-    		neighbour[3].setBetweenY(positionY + 1);
-    	} else {
-    		neighbour[3] = new Neighbour(positionX - 2, positionY, false);
-    	}
-    	
-    	int oldI;
-    	int i = 4;
-    	
-    	for (int j = 0; j < neighbour.length; j++) {
-    		
-    		oldI = i;
-    		
-    		i = Map.randomNumber(4);
-    		
-    		while (i == oldI) {
-    			i = Map.randomNumber(4);
-    		}
-    		
-    		if (neighbour[i].getAccessable() && !wall[neighbour[i].getX()][neighbour[i].getY()].getVisited()) {
-    			
-    			wall[neighbour[i].getBetweenX()][neighbour[i].getBetweenY()].setExist(false);    				
-    			map[neighbour[i].getBetweenX()][neighbour[i].getBetweenY()] = ' ';
-    			
-				this.generateMatchfield(neighbour[i].getX(), neighbour[i].getY());
-    			
-    		} 
-    	}
-    	
-    	
-    	
+        //checkMap initialisieren
+        boolean [][] checkMap = new boolean [this.height][this.width];
+
+        for (int i = 0; i < this.height; i++) {
+            for (int j = 0; j < this.width; i++) {
+                checkMap [i][j] = true;
+            }
+        }
+
+
     }
     
     

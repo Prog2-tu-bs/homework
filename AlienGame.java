@@ -67,26 +67,61 @@ public class AlienGame {
 			//Karte ausgeben
 			System.out.println(map1.toString());
 				
-			try {	
-				
-				System.out.println("\nDer Spieler hat noch " + map1.getHitpoints() + " Leben!");
-				//x-Koordinate fuer den Angriff des Spielers einlesen
-				System.out.println("Wo soll der Spieler angreifen? (X-Koordinate)");
-				xattack = scan1.nextInt();
-					
-				//y-Koordinate fuer den Angriff des Spielers einlesen
-				System.out.println("Wo soll der Spieler angreifen? (Y-Koordinate)");
-				yattack = scan1.nextInt();			
-				
-				//Pruefen ob ein Alien bei den angegebenen Koordinaten ist.
-				if (map1.checkCoordinates(xattack, yattack)) {
-					
-					//Ausfuehren der Runde in der Klasse Map und anschleissende Ausgabe
-					System.out.println(map1.round(xattack, yattack));
-				} else {
-					//Falls sich kein Alien bei den Koordinaten befindet
-					System.out.println("Bitte korrekte Koordinaten angeben!");
-				}
+			try {
+
+                System.out.println("\nDer Spieler hat noch " + map1.getHitpoints() + " Leben!");
+
+                // Abfrage fuer die Bewegung des Spielers   map1.checkDirection(direction
+                System.out.println("Wohin soll der Spieler sich bewegen?");
+                String direction = scan1.next();
+
+
+                // Bewegung des Spielers
+                if(map1.checkDirection(direction)) {
+                   map1.movePlayer(direction);
+                } else {
+                    System.out.println("Bewegung nicht moeglich!");
+                }
+
+
+                //x-Koordinate fuer den Angriff des Spielers einlesen
+                System.out.println("Wo soll der Spieler angreifen? (X-Koordinate)");
+                xattack = scan1.nextInt();
+
+
+                //y-Koordinate fuer den Angriff des Spielers einlesen
+                System.out.println("Wo soll der Spieler angreifen? (Y-Koordinate)");
+                yattack = scan1.nextInt();
+
+
+                //Angabe der Koordinaten des angegriffenen Aliens
+                System.out.println("\nDer Spieler greift das Alien bei (" + xattack + "," + yattack + ") an.");
+
+
+
+                //Pruefen ob ein Alien bei den angegebenen Koordinaten ist.
+                if (map1.checkCoordinates(xattack, yattack)) {
+                    //Angriffsversuch des Spielers
+                    boolean successPlayer = map1.attacking(xattack, yattack);
+
+                    if (successPlayer) {
+                        //getroffenes Alien finden / anpassen
+                        map1.fightedAlien(xattack, yattack);
+
+                        //Ausgabe des Ergebnisses
+                        System.out.println("\nDer Spieler hat das Alien getroffen!");
+
+                    } else {
+                        //Wenn der Angriff nicht erfolgreich war
+                        System.out.println("\nDer Spieler hat das Alien verfehlt!");
+
+                    } //end if-else
+
+                    System.out.println(map1.alienTurn());
+                } else {
+                    //Falls sich kein Alien bei den Koordinaten befindet
+                    System.out.println("Bitte korrekte Koordinaten angeben!");
+                }
 
 			} catch (InputMismatchException e) {
 			    //Falls eine falsche Eingabe gemacht wurde
@@ -94,7 +129,8 @@ public class AlienGame {
 			    scan1.next();   
 
 			} //end try-catch
-		    
+
+
 			//Pruefen ob ein Kriterium zum Beenden des Spieles erfuellt ist
 		    String end = map1.roundEnd();
 		    if (!end.equals("")) {
