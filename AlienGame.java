@@ -23,6 +23,7 @@ public class AlienGame {
         try {
         	
         	if (args.length < 3) {
+        		System.out.println("Parameter fehlen!");
         		System.exit(0);
         	}
         
@@ -48,10 +49,12 @@ public class AlienGame {
 		
 		//Anzahl der Gegner einlesen
 		int numberOfAliens = Integer.parseInt(args[2]);
-		
+
+		System.out.println("preMap");
 		//Erstellen des Objektes Spielfeld
 		Map map1 = new Map(y, x, numberOfAliens);
-		
+		System.out.println("postMap");
+
 		//Scanner erstellen
 		Scanner scan1 = new Scanner(System.in);
 		

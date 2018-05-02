@@ -30,8 +30,10 @@ public class Map {
     public Map(int height, int width, int numberOfAliens) {
     		
     	//Erstellen des Karten-Arrays
+		System.out.println("precreatemap");
         this.map = new char[width][height];
-        
+
+        System.out.println("precreatewall");
         Map.wall = new Wall[width][height];
         
         //Hoehe und Breite
@@ -55,18 +57,18 @@ public class Map {
     	int positionY = Map.randomNumber(this.width);
     	
     	//this.generateMatchfield(positionX, positionY);
-	
-        
-        //Erstellen des Spieler
-        this.createPlayer();	
-        
-           
 
+        System.out.println("preplayer");
+        //Erstellen des Spieler
+        this.createPlayer();
+
+
+        System.out.println("prealiens");
         //Erstellen des Alien-Arrays (Objekt der Klasse Alien)
         this.aliens = new Alien[numberOfAliens];
         
         this.createAliens();
-        
+        System.out.println("postaliens");
        
     } //end Constructor
 
